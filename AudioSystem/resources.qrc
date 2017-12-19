@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/control_folder.png</file>
+        <file>icons/control_mute.png</file>
+        <file>icons/control_next.png</file>
+        <file>icons/control_pause.png</file>
+        <file>icons/control_play.png</file>
+        <file>icons/control_previous.png</file>
+        <file>icons/control_stop.png</file>
+        <file>icons/control_volume.png</file>
+        <file>icons/mp3.png</file>
+        <file>icons/next.png</file>
+        <file>icons/previous.png</file>
+        <file>icons/radio.png</file>
+        <file>icons/home.png</file>
+    </qresource>
+</RCC>
