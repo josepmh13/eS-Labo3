@@ -1,0 +1,141 @@
+########################################################################
+	         	RADIO CON YOCTO PROJECT
+########################################################################
+LINKS:
+
+https://www.andreagrandi.it/2013/01/17/using-qtcreator-to-deploy-and-run-a-qt-application-to-a-remote-linux-device/
+https://community.nxp.com/thread/309578
+http://www.yoctoproject.org/docs/2.4/sdk-manual/sdk-manual.html
+http://www.yoctoproject.org/docs/2.4/bitbake-user-manual/bitbake-user-manual.html
+http://wiki.hioproject.org/index.php?title=HIO_Wiki:Set_Up_Qt_Creator_for_Yocto_Device
+https://www.youtube.com/watch?v=jJUz3KUnSjw
+http://www.informit.com/articles/article.aspx?p=2514911
+https://coherentmusings.wordpress.com/tag/building-qt5-with-yoctopoky/
+http://xlon.de/wiki/index.php?title=Building_Qt5_using_Yocto
+http://developer.toradex.com/knowledge-base/how-to-set-up-qt-creator-to-cross-compile-for-embedded-linux
+https://www.yoctoproject.org/docs/current/yocto-project-qs/yocto-project-qs.html
+
+MAS USADO:
+
+https://www.ics.com/blog/configuring-qt-creator-yocto-development
+###############################################################################
+0. Instalar qtcreator 
+
+1. Instalar paquetes necesarios
+
+$ sudo apt-get install gawk wget git-core diffstat unzip texinfo gcc-multilib \
+     build-essential chrpath socat cpio python python3 python3-pip python3-pexpect \
+     xz-utils debianutils iputils-ping libsdl1.2-dev xterm
+
+2. Crear la imagen 
+$ git clone git://git.yoctoproject.org/poky
+$ cd poky
+$ git checkout -b rocko origin/rocko
+$ git clone https://github.com/meta-qt5/meta-qt5.git
+$ cd meta-qt5
+$ git checkout -b rocko origin/rocko
+$ cd ..
+$ source oe-init-build-env
+
+En este paso se tuvo que haber pasado a la carpeta build...
+
+3. Aquí haces 
+$ cd conf/
+$ gedit local.cof 
+$ gedir bblayers.conf
+
+--> Los pones como te voy a pasar y aquí los editas para que quede /home/jose13/poky/meta \ == /home/luisa/poky/meta \
+
+4. Haces el paso que dura como 8 hrs
+
+$ bitbake core-image-x11
+
+5. Al terminar, se hizo la imagen
+
+$ runqemu qemuarm
+
+--> Para probarlo, puedes conectarte por ssh o hacer algo
+En qemu:
+$ ifconfig
+-->IP 192.168.7.2
+
+En una terminal nueva:   OCUPAS TENER INSTALADO SSH EN UBUNTU
+$ ssh root@192.168.7.2
+
+6. Cerrar qemu y seguir con el sdk, este dura como 2 hrs
+
+$ bitbake meta-toolchain-qt5
+
+7. Al terminar haces
+
+$ cd tmp/deploy/sdk/
+$ sh poky-glibc-x86_64-meta-toolchain-qt5-armv5e-toolchain-2.4.sh
+
+Este último dura como 20 min
+
+###############################################################################
+
+8. Abres una terminal nueva 
+
+$ cd ../../opt/poky/2.4/sysroots/
+$ source environment-setup-armv5e-poky-linux-gnueabi
+Si funciona:
+$ which qmake 
+/opt/poky/2.4/sysroots/x86_64-pokysdk-linux/usr/bin/qt5/qmake
+
+9. Ejecutas qtcreator desde la terminal, poniendo la ruta donde se encuentre el programa y ejecutando el terminado en .sh 
+Voy a ponerte el de mi caso, no sé si en el tuyo cambie, depende donde quede la carpeta de QT
+ 
+$ ./../../../home/jose13/Qt5.7.0/Tools/QtCreator/bin/qtcreator.sh 
+
+--> Primero me salgo de donde estoy, luego me regreso al home de jose13 porque ahí se me instalo Qt, en este paso si tienes que ponerlo así
+porque si te sales, te da error de ambiente
+
+###############################################################################
+
+10. Una vez en Qt te vas a Tools/Options/Buil&Run
+
+En todos los casos le das Add:
+
+10.1 Compilers
+Name : GCC Radio
+Path: /opt/poky/2.4/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-g++
+
+10.2 Debuggers
+Name: GDB Radio
+Path: /opt/poky/2.4/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-gdb
+
+10.3 Qt Versions
+qmake location: /opt/poky/2.4/sysroots/x86_64-pokysdk-linux/usr/bin/qt5/qmake
+
+10.4 Kits
+--> LO CONFIGURAS COMO LA IMAGEN, ADEMÁS ADJUNTO LAS DEMÁS
+
+###############################################################################
+
+11. Abres nuesto projecto
+12. En project, le das Add Kit y pones el de Yocto
+
+
+###############################################################################
+
+12. Le das build pero con la configuración de yocto, esto lo haces donde dice debug
+13. Luego Build... Esta parte crea el .bin de nuestro proyecto pero para la configuración de nuestra imagen
+14. Tienes que buscar la carpeta donde se guarda, en mi caso: (Adjunto imagen builddirectory.png)
+
+###############################################################################
+
+15. Ahora hay que pasarle los archivos manualmente:
+16. Abres Remmima (instalado por default en ubuntu)
+17. Te conectas por ssh
+Passwd: esta son clave (empty)
+User: root
+IP: 192.168.7.2
+18. Sale como sigue (imagen remmima.png) Aqui te vas a Tools arriba y elegis Open Secure File Transfer 
+19. Te sale (transfer.png)
+20. Subes TODOS los archivos de la carpeta de build del proyecto 
+21. Cambias los permisos porque me paso que estaba rw- lo pasas a rwx
+22. Ejecutas el .bin
+$ ./AudioSystem
+
+
