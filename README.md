@@ -1,7 +1,4 @@
-# hello-word
-
-Hi human!
-
-Mi primer repositorio
-
-Hubot here, I like Node 
+# 3rd Laboratory 
+# Students: Luisa Quesada Camacho & Jose Martinez Hernandez
+# University of Costa Rica
+# Embedded Systems
